@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 페이지</title>
+    <style>body { font-family: sans-serif; max-width: 600px; margin: 50px auto; background-color: #f8f9fa; } .container { background: white; padding: 2em; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); } h1 { text-align: center; } .flash { padding: 1em; margin-bottom: 1em; border-radius: 5px; } .flash.success { background-color: #d4edda; color: #155724; } .flash.error { background-color: #f8d7da; color: #721c24; } form { display: flex; flex-direction: column; gap: 10px; } button { padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; } a { display: block; text-align: center; margin-top: 20px; }</style>
+</head>
+<body>
+    <div class="container">
+        <h1>이수증 발급 명단 등록</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ 'success' if '성공' in message else 'error' }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form method="post" action="{{ url_for('upload_file') }}" enctype="multipart/form-data">
+            <p><b>'이름', '기관', '이메일'</b> 컬럼이 포함된 엑셀 파일을 업로드하세요.</p>
+            <input type="file" name="file" accept=".xlsx, .xls" required>
+            <button type="submit">명단 업로드</button>
+        </form>
+        <a href="{{ url_for('lookup') }}">참여자 조회 페이지로 가기</a>
+    </div>
+</body>
+</html>

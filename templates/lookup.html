@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>이수증 조회</title>
+    <style>body { font-family: sans-serif; max-width: 500px; margin: 50px auto; background-color: #f8f9fa; } .container { background: white; padding: 2em; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); } h1 { text-align: center; } .flash { padding: 1em; margin-bottom: 1em; border-radius: 5px; background-color: #f8d7da; color: #721c24; text-align: center; } form { display: flex; flex-direction: column; gap: 10px; } input { padding: 10px; } button { padding: 10px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; }</style>
+</head>
+<body>
+    <div class="container">
+        <h1>이수증 조회하기</h1>
+        <p>행사 등록 시 사용했던 이메일 주소를 입력해주세요.</p>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash">{{ messages[0] }}</div>
+            {% endif %}
+        {% endwith %}
+        <form method="get" action="{{ url_for('certificate_view') }}">
+            <input type="email" name="email" placeholder="your-email@example.com" required>
+            <button type="submit">조회하기</button>
+        </form>
+    </div>
+</body>
+</html>

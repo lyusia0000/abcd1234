@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>이수증 발급</title>
+    <style>body { font-family: sans-serif; text-align: center; margin-top: 30px; } img { max-width: 80%; border: 1px solid #ccc; box-shadow: 0 4px 8px rgba(0,0,0,0.1); } .controls { margin-top: 20px; } a { display: inline-block; padding: 12px 25px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; } a:hover { background-color: #0056b3; }</style>
+</head>
+<body>
+    <h1>{{ name }}님의 이수증</h1>
+    <p>아래 이미지를 확인하시고 다운로드하세요.</p>
+    
+    <img src="{{ url_for('generate_image', email=email) }}" alt="이수증">
+    
+    <div class="controls">
+        <a href="{{ url_for('generate_image', email=email) }}" download="{{ name }}_이수증.png">이미지 다운로드</a>
+    </div>
+</body>
+</html>
