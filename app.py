@@ -10,7 +10,7 @@ app.secret_key = 'supersecretkey_for_v2'
 
 # 폴더 설정
 UPLOAD_FOLDER = 'uploads'
-RESOURCE_FOLDER = 'resources'
+RESOURCE_FOLDER = '/home/Jeongsh/abcd1234/resources'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
