@@ -92,5 +92,6 @@ def certificate_view():
         cursor.execute('SELECT name, institution FROM participants WHERE email = ?', (email,))
         user_info = cursor.fetchone()
 
-    if not user_info:
-        flash('등록되지 않은 이메일입니다.
+if not user_info:
+    flash('등록되지 않은 이메일입니다. 다시 확인해주세요.') # <-- 끝에 ' 추가
+    return redirect(url_for('lookup'))
