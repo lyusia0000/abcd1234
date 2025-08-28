@@ -20,6 +20,7 @@
             <input type="file" name="file" accept=".xlsx, .xls" required>
             <button type="submit">명단 업로드</button>
         </form>
+        <a href="{{ url_for('logout') }}" style="color: #dc3545; margin-top: 20px;">로그아웃</a>
         <a href="{{ url_for('lookup') }}">참여자 조회 페이지로 가기</a>
     </div>
 </body>
