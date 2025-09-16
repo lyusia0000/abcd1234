@@ -7,15 +7,16 @@ from PIL import Image, ImageDraw, ImageFont
 
 # --- 초기 설정 ---
 app = Flask(__name__)
-# session을 사용하려면 secret_key가 반드시 필요합니다.
+# 세션 기능을 사용하기 위한 시크릿 키
 app.secret_key = 'a_very_secret_key_for_session'
 
-# 관리자 로그인 정보 (요청하신대로 설정)
+# 관리자 로그인 정보
 ADMIN_USERNAME = 'tkeoehguq'
 ADMIN_PASSWORD = '2025vhgkdrhdeo'
 
-# 폴더 및 데이터베이스 경로 설정
-BASE_DIR = '/home/Jeongsh/abcd1234' # ★ 본인의 아이디와 폴더명 확인
+# PythonAnywhere 서버의 전체 경로 설정
+# ★★★ 다음 담당자는 이 부분을 본인의 아이디와 폴더명으로 수정해야 합니다 ★★★
+BASE_DIR = '/home/kapul2022/abcd1234' 
 UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
 RESOURCE_FOLDER = os.path.join(BASE_DIR, 'resources')
 DATABASE_PATH = os.path.join(BASE_DIR, 'participants.db')
@@ -23,6 +24,7 @@ DATABASE_PATH = os.path.join(BASE_DIR, 'participants.db')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def init_db():
+    """앱 시작 시 데이터베이스와 테이블이 없으면 생성"""
     with sqlite3.connect(DATABASE_PATH) as conn:
         cursor = conn.cursor()
         cursor.execute('''
@@ -38,6 +40,7 @@ def init_db():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """관리자 로그인 페이지"""
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -51,18 +54,21 @@ def login():
 
 @app.route('/logout')
 def logout():
+    """로그아웃"""
     session.pop('logged_in', None)
     flash('로그아웃 되었습니다.')
     return redirect(url_for('lookup'))
 
 @app.route('/admin')
 def admin():
+    """관리자 페이지 (로그인 필요)"""
     if not session.get('logged_in'):
         return redirect(url_for('login'))
     return render_template('admin.html')
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
+    """엑셀 명단 업로드 및 데이터베이스 저장 (로그인 필요)"""
     if not session.get('logged_in'):
         return redirect(url_for('login'))
         
@@ -105,10 +111,12 @@ def upload_file():
 
 @app.route('/')
 def lookup():
+    """참여자용 이수증 조회 페이지 (메인)"""
     return render_template('lookup.html')
 
 @app.route('/certificate')
 def certificate_view():
+    """이수증 다운로드 안내 페이지"""
     email = request.args.get('email')
     if not email:
         return redirect(url_for('lookup'))
@@ -127,8 +135,9 @@ def certificate_view():
     return render_template('certificate_view.html', name=name, email=email)
 
 
-@app.route('/generate_image')
-def generate_image():
+@app.route('/generate_pdf')
+def generate_pdf():
+    """이수증 PDF 생성 및 다운로드"""
     email = request.args.get('email')
     
     user_info = None
@@ -148,15 +157,21 @@ def generate_image():
     font = ImageFont.truetype(font_path, 22)
     text_color = "black"
 
+    # 텍스트 위치
     draw.text((290, 340), institution, font=font, fill=text_color)
     draw.text((290, 400), name, font=font, fill=text_color)
     
-    img_io = io.BytesIO()
-    image.save(img_io, 'PNG')
-    img_io.seek(0)
-    
-    return send_file(img_io, mimetype='image/png')
+    rgb_image = image.convert('RGB')
 
+    pdf_io = io.BytesIO()
+    rgb_image.save(pdf_io, "PDF", resolution=100.0)
+    pdf_io.seek(0)
+    
+    filename = f"{name}_참가확인증.pdf"
+    return send_file(pdf_io, mimetype='application/pdf',
+                     as_attachment=True, download_name=filename)
+
+# 앱이 처음 시작될 때 데이터베이스 초기화 함수를 실행
 init_db()
 
 if __name__ == '__main__':
